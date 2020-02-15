@@ -649,9 +649,9 @@ sub acl_comment {
 
     my $result;
     if (defined $comment) {
-        $result = $acl->comment ($comment);
+        $result = $acl->set_comment ($comment);
     } else {
-        $result = $acl->comment;
+        $result = $acl->get_comment();
         if (!$result) {
             $result = 'No comment set';
         }

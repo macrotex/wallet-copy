@@ -362,8 +362,14 @@ sub add {
     return 1;
 }
 
-# Get or set the comment of an ACL.
-sub comment {
+# Get the comment of an ACL.
+sub get_comment {
+    my ($self) = @_;
+    return $self->comment();
+}
+
+# Set the comment of an ACL.
+sub set_comment {
     my ($self, $comment) = @_;
 
     if ($comment) {
@@ -381,7 +387,8 @@ sub comment {
             return;
         }
     } else {
-        return $self->comment();
+        $self->error ("missing comment in set_comment for ACL $self->{name}");
+        return;
     }
 }
 
