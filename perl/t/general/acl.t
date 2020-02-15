@@ -12,10 +12,11 @@ use strict;
 use warnings;
 
 use POSIX qw(strftime);
-use Test::More tests => 115;
+use Test::More tests => 123;
 
 use Wallet::ACL;
 use Wallet::Admin;
+use Wallet::Config;
 use Wallet::Object::Base;
 
 use lib 't/lib';
@@ -307,6 +308,45 @@ is ($obj_new->owner, 'example-new',
     ' and object already with new acl is correct');
 is ($obj_unrelated->owner, 'example-other',
     ' and unrelated object ownership is correct');
+
+# Test ACL comments.
+my $comment;
+$acl = eval { Wallet::ACL->create ('test-comment', $schema, @trace) };
+ok (defined ($acl), 'ACL creation for setting up comment');
+if (!defined($acl->comment)) {
+    ok (1, ' new ACL has no comment defined');
+} else {
+    is ($acl->error, undef, ' new ACL has no comment defined');
+}
+$comment = 'this is an ACL comment';
+if ($acl->set_comment($comment)) {
+    ok (1, ' added ACL comment');
+} else {
+    is ($acl->error, 1, ' added ACL comment');
+}
+ok (($acl->comment() eq $comment), ' store ACL comment correctly');
+$comment = q{};
+if ($acl->set_comment($comment)) {
+    ok (1, ' added ACL comment');
+} else {
+    is ($acl->error, 1, ' added ACL comment');
+}
+ok (!defined($acl->comment()), ' stored empty ACL comment correctly');
+
+SKIP: {
+      if ($Wallet::Config::DB_DRIVER =~ m{sqlite}ixsm) {
+          skip 'SQLite does not enforce length restrictions', 2 ;
+      }
+      $comment = '0' x 259 ;
+      if ($acl->set_comment($comment)) {
+          ok (1, ' added long ACL comment');
+      } else {
+          is ($acl->error, 1, ' added long ACL comment');
+      }
+      ok ((length($acl->comment()) == 255), ' stored long ACL comment correctly');
+}
+
+$acl->destroy (@trace);
 
 # Clean up.
 $setup->destroy;

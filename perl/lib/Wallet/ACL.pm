@@ -372,7 +372,7 @@ sub get_comment {
 sub set_comment {
     my ($self, $comment) = @_;
 
-    if ($comment) {
+    if (defined($comment)) {
         if ($comment eq q{}) {
             $comment = undef;
         }
@@ -383,6 +383,10 @@ sub set_comment {
             $acl->ac_comment($comment);
             $acl->update;
             $guard->commit;
+
+            # Re-read (comment field may have been truncated)
+            $acl = $self->{schema}->resultset('Acl')->find (\%search);
+            $self->{comment} = $acl->ac_comment;
         };
         if ($@) {
             $self->error ("cannot update comment for ACL $self->{name}: $@");
