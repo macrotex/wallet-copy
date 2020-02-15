@@ -651,10 +651,7 @@ sub acl_comment {
     if (defined $comment) {
         $result = $acl->set_comment ($comment);
     } else {
-        $result = $acl->get_comment();
-        if (!$result) {
-            $result = 'No comment set';
-        }
+        return $acl->get_comment();
     }
     if (not defined ($result) and $acl->error) {
         $self->error ($acl->error);

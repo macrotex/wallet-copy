@@ -378,8 +378,10 @@ sub set_comment {
         }
         eval {
             my $guard = $self->{schema}->txn_scope_guard;
-            $self->{comment} = $comment;
-            $self->update();
+            my %search = (ac_id => $self->{id});
+            my $acl = $self->{schema}->resultset('Acl')->find (\%search);
+            $acl->ac_comment($comment);
+            $acl->update;
             $guard->commit;
         };
         if ($@) {
@@ -390,6 +392,8 @@ sub set_comment {
         $self->error ("missing comment in set_comment for ACL $self->{name}");
         return;
     }
+
+    return 1;
 }
 
 # Remove an ACL entry to this ACL.  Returns true on success and false on

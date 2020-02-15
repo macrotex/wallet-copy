@@ -155,8 +155,19 @@ sub command {
             check_args (1, 1, [], @args);
             $server->acl_create (@args) or failure ($server->error, @_);
         } elsif ($action eq 'comment') {
-            check_args (1, 1, [], @args);
-            $server->acl_comment (@args) or failure ($server->error, @_);
+            check_args (1, 2, [2], @args);
+            if (@args > 1) {
+                $server->acl_comment (@args) or failure ($server->error, @_);
+            } else {
+                my $output = $server->acl_comment (@args);
+                if (defined $output) {
+                    print $output, "\n";
+                } elsif (not $server->error) {
+                    print "No comment set\n";
+                } else {
+                    failure ($server->error, @_);
+                }
+            }
         } elsif ($action eq 'destroy') {
             check_args (1, 1, [], @args);
             $server->acl_destroy (@args) or failure ($server->error, @_);
