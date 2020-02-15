@@ -44,7 +44,7 @@ DROP TABLE "acls" CASCADE;
 CREATE TABLE "acls" (
   "ac_id" serial NOT NULL,
   "ac_name" character varying(255) NOT NULL,
-  "ac_comment" character varying(255) NOT NULL,
+  "ac_comment" character varying(255),
   PRIMARY KEY ("ac_id"),
   CONSTRAINT "ac_name" UNIQUE ("ac_name")
 );

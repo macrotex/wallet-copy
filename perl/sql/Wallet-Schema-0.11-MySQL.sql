@@ -49,7 +49,7 @@ DROP TABLE IF EXISTS `acls`;
 CREATE TABLE `acls` (
   `ac_id` integer NOT NULL auto_increment,
   `ac_name` varchar(255) NOT NULL,
-  `ac_comment` varchar(255) NOT NULL,
+  `ac_comment` varchar(255) NULL,
   PRIMARY KEY (`ac_id`),
   UNIQUE `ac_name` (`ac_name`)
 ) ENGINE=InnoDB;

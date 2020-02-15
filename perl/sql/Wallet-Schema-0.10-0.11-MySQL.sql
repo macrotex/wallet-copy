@@ -2,7 +2,7 @@
 
 BEGIN;
 
-ALTER TABLE acls ADD COLUMN ac_comment varchar(255) NULL;
+ALTER TABLE acls ADD COLUMN ac_comment varchar(255);
 
 COMMIT;
 

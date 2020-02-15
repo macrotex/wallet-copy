@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS acls;
 CREATE TABLE acls (
   ac_id INTEGER PRIMARY KEY NOT NULL,
   ac_name varchar(255) NOT NULL,
-  ac_comment varchar(255) NOT NULL
+  ac_comment varchar(255)
 );
 
 CREATE UNIQUE INDEX ac_name ON acls (ac_name);
