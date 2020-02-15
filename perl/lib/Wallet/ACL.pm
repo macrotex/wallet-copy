@@ -50,6 +50,7 @@ sub new {
         schema  => $schema,
         id      => $data->ac_id,
         name    => $data->ac_name,
+        comment => $data->ac_comment,
     };
     bless ($self, $class);
     return $self;
@@ -124,6 +125,12 @@ sub id {
 sub name {
     my ($self)= @_;
     return $self->{name};
+}
+
+# Returns the comment of the ACL.
+sub comment {
+    my ($self)= @_;
+    return $self->{comment};
 }
 
 # Given an ACL scheme, return the mapping to a class by querying the
@@ -355,6 +362,29 @@ sub add {
     return 1;
 }
 
+# Get or set the comment of an ACL.
+sub comment {
+    my ($self, $comment) = @_;
+
+    if ($comment) {
+        if ($comment eq q{}) {
+            $comment = undef;
+        }
+        eval {
+            my $guard = $self->{schema}->txn_scope_guard;
+            $self->{comment} = $comment;
+            $self->update();
+            $guard->commit;
+        };
+        if ($@) {
+            $self->error ("cannot update comment for ACL $self->{name}: $@");
+            return;
+        }
+    } else {
+        return $self->comment();
+    }
+}
+
 # Remove an ACL entry to this ACL.  Returns true on success and false on
 # failure.  Detect the case where no such row exists before doing the delete
 # so that we can provide a good error message.
@@ -428,6 +458,12 @@ sub show {
         my ($scheme, $identifier) = @$entry;
         $output .= "  $scheme $identifier\n";
     }
+
+    my $comment = $self->comment;
+    if ($comment) {
+        $output .= "comment: $comment\n";
+    }
+
     return $output;
 }
 
