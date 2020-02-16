@@ -11,7 +11,7 @@
 --
 -- Table: acl_history.
 --
-DROP TABLE "acl_history" CASCADE;
+DROP TABLE IF EXISTS "acl_history" CASCADE;
 CREATE TABLE "acl_history" (
   "ah_id" serial NOT NULL,
   "ah_acl" integer NOT NULL,
@@ -30,7 +30,7 @@ CREATE INDEX "acl_history_idx_ah_name" on "acl_history" ("ah_name");
 --
 -- Table: acl_schemes.
 --
-DROP TABLE "acl_schemes" CASCADE;
+DROP TABLE IF EXISTS "acl_schemes" CASCADE;
 CREATE TABLE "acl_schemes" (
   "as_name" character varying(32) NOT NULL,
   "as_class" character varying(64),
@@ -40,7 +40,7 @@ CREATE TABLE "acl_schemes" (
 --
 -- Table: acls.
 --
-DROP TABLE "acls" CASCADE;
+DROP TABLE IF EXISTS "acls" CASCADE;
 CREATE TABLE "acls" (
   "ac_id" serial NOT NULL,
   "ac_name" character varying(255) NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE "acls" (
 --
 -- Table: enctypes.
 --
-DROP TABLE "enctypes" CASCADE;
+DROP TABLE IF EXISTS "enctypes" CASCADE;
 CREATE TABLE "enctypes" (
   "en_name" character varying(255) NOT NULL,
   PRIMARY KEY ("en_name")
@@ -61,7 +61,7 @@ CREATE TABLE "enctypes" (
 --
 -- Table: flags.
 --
-DROP TABLE "flags" CASCADE;
+DROP TABLE IF EXISTS "flags" CASCADE;
 CREATE TABLE "flags" (
   "fl_type" character varying(16) NOT NULL,
   "fl_name" character varying(255) NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE "flags" (
 --
 -- Table: keytab_enctypes.
 --
-DROP TABLE "keytab_enctypes" CASCADE;
+DROP TABLE IF EXISTS "keytab_enctypes" CASCADE;
 CREATE TABLE "keytab_enctypes" (
   "ke_name" character varying(255) NOT NULL,
   "ke_enctype" character varying(255) NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE "keytab_enctypes" (
 --
 -- Table: keytab_sync.
 --
-DROP TABLE "keytab_sync" CASCADE;
+DROP TABLE IF EXISTS "keytab_sync" CASCADE;
 CREATE TABLE "keytab_sync" (
   "ks_name" character varying(255) NOT NULL,
   "ks_target" character varying(255) NOT NULL,
@@ -92,7 +92,7 @@ CREATE TABLE "keytab_sync" (
 --
 -- Table: object_history.
 --
-DROP TABLE "object_history" CASCADE;
+DROP TABLE IF EXISTS "object_history" CASCADE;
 CREATE TABLE "object_history" (
   "oh_id" serial NOT NULL,
   "oh_type" character varying(16) NOT NULL,
@@ -112,7 +112,7 @@ CREATE INDEX "object_history_idx_oh_type_oh_name" on "object_history" ("oh_type"
 --
 -- Table: sync_targets.
 --
-DROP TABLE "sync_targets" CASCADE;
+DROP TABLE IF EXISTS "sync_targets" CASCADE;
 CREATE TABLE "sync_targets" (
   "st_name" character varying(255) NOT NULL,
   PRIMARY KEY ("st_name")
@@ -121,7 +121,7 @@ CREATE TABLE "sync_targets" (
 --
 -- Table: types.
 --
-DROP TABLE "types" CASCADE;
+DROP TABLE IF EXISTS "types" CASCADE;
 CREATE TABLE "types" (
   "ty_name" character varying(16) NOT NULL,
   "ty_class" character varying(64),
@@ -131,7 +131,7 @@ CREATE TABLE "types" (
 --
 -- Table: acl_entries.
 --
-DROP TABLE "acl_entries" CASCADE;
+DROP TABLE IF EXISTS "acl_entries" CASCADE;
 CREATE TABLE "acl_entries" (
   "ae_id" integer NOT NULL,
   "ae_scheme" character varying(32) NOT NULL,
@@ -144,7 +144,7 @@ CREATE INDEX "acl_entries_idx_ae_id" on "acl_entries" ("ae_id");
 --
 -- Table: objects.
 --
-DROP TABLE "objects" CASCADE;
+DROP TABLE IF EXISTS "objects" CASCADE;
 CREATE TABLE "objects" (
   "ob_type" character varying(16) NOT NULL,
   "ob_name" character varying(255) NOT NULL,
@@ -178,7 +178,7 @@ CREATE INDEX "objects_idx_ob_type" on "objects" ("ob_type");
 --
 -- Table: duo.
 --
-DROP TABLE "duo" CASCADE;
+DROP TABLE IF EXISTS "duo" CASCADE;
 CREATE TABLE "duo" (
   "du_name" character varying(255) NOT NULL,
   "du_type" character varying(16) NOT NULL,

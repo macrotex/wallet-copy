@@ -12,7 +12,7 @@ use strict;
 use warnings;
 
 use POSIX qw(strftime);
-use Test::More tests => 115;
+use Test::More tests => 122;
 
 use Wallet::ACL;
 use Wallet::Admin;
@@ -36,8 +36,31 @@ my @trace = ($admin, $host, time);
 db_setup;
 my $setup = setup_initialize();
 is ($@, '', 'Database connection succeeded');
-is ($setup->reinitialize ($setup), 1, 'Database initialization succeeded');
+is ($setup->reinitialize ($admin), 1, 'Database initialization succeeded');
 my $schema = $setup->schema;
+
+<<<<<<< Updated upstream
+=======
+# #### ## #### ## #### ## #### ## #### ## #### ## #### ## #### #
+sub show_acl_id {
+    my ($id1) = @_ ;
+    my $acl1 = eval { Wallet::ACL->new ($id1, $schema) };
+    warn '-----------------';
+    if ($acl1) {
+        warn $acl1->show();
+    } else {
+        warn "no ACL with id $id1";
+    }
+    warn '-----------------';
+    return;
+}
+sub show_several {
+    show_acl_id(1);
+    show_acl_id(2);
+    show_acl_id(3);
+    show_acl_id(4);
+}
+# #### ## #### ## #### ## #### ## #### ## #### ## #### ## #### #
 
 # Test create and new.
 my $acl = eval { Wallet::ACL->create ('test', $schema, @trace) };
@@ -169,15 +192,16 @@ is ($acl->show, "Members of ACL test (id: 2) are:\n", ' and show concurs');
 is ($acl->check ($user2), 0, ' and the second user check fails');
 is (scalar ($acl->check_errors), '', ' with no error message');
 
-# Test rename.
+# Test nesting.
 my $acl_nest = eval { Wallet::ACL->create ('test-nesting', $schema, @trace) };
-
 ok (defined ($acl_nest), 'ACL creation for setting up nested');
 if ($acl_nest->add ('nested', 'test', @trace)) {
     ok (1, ' and adding the nesting');
 } else {
     is ($acl_nest->error, '', ' and adding the nesting');
 }
+
+# Test rename. Rename
 if ($acl->rename ('example', @trace)) {
     ok (1, 'Renaming the ACL');
 } else {
@@ -315,6 +339,37 @@ is ($obj_new->owner, 'example-new',
     ' and object already with new acl is correct');
 is ($obj_unrelated->owner, 'example-other',
     ' and unrelated object ownership is correct');
+
+# Test ACL comments.
+my $comment;
+$acl = eval { Wallet::ACL->create ('test-comment', $schema, @trace) };
+ok (defined ($acl), 'ACL creation for setting up comment');
+if (!defined($acl->comment)) {
+    ok (1, ' new ACL has no comment defined');
+} else {
+    is ($acl->error, undef, ' new ACL has no comment defined');
+}
+$comment = 'this is an ACL comment';
+if ($acl->set_comment($comment)) {
+    ok (1, ' added ACL comment');
+} else {
+    is ($acl->error, 1, ' added ACL comment');
+}
+ok (($acl->comment() eq $comment), ' store ACL comment correctly');
+$comment = q{};
+if ($acl->set_comment($comment)) {
+    ok (1, ' added ACL comment');
+} else {
+    is ($acl->error, 1, ' added ACL comment');
+}
+ok (!defined($acl->comment()), ' stored empty ACL comment correctly');
+
+# Test a long comment; should raise an exception.
+$comment = '0' x 259 ;
+eval { ($acl->set_comment($comment)) } ;
+is ($acl->error, 'comment cannot be longer than 255 characters');
+
+$acl->destroy (@trace);
 
 # Clean up.
 $setup->destroy;
