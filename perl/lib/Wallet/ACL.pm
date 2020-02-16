@@ -374,7 +374,7 @@ sub get_comment {
 sub set_comment {
     my ($self, $comment) = @_;
 
-    if ($comment) {
+    if (defined($comment)) {
         if ($comment eq q{}) {
             $comment = undef;
         } else {
