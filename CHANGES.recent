@@ -1,0 +1,52 @@
+These are the changes in this pull request:
+
+* Add the "comment" field to ACLs. Interface is the same as for objects:
+
+        wallet acl comment group/access "This is a comment"
+
+  Output looks like this:
+
+        Members of ACL group/spdb (id: 7338) are:
+          krb5 host/lemon-uat1.example.com@EXAMPLE.COM
+          krb5 host/lemon-uat2.example.com@EXAMPLE.COM
+          krb5 host/lemon1.example.com@EXAMPLE.COM
+          krb5 host/lemon2.example.com@EXAMPLE.COM
+          netdb-root lemon-uat1.example.com
+          netdb-root lemon-uat2.example.com
+          netdb-root lemon1.example.com
+          netdb-root lemon2.example.com
+        comment: This is a comment
+
+* In the output of an ACLs history add secondary sort on the history
+  entries' primary key in the history table. This is to handle cases where
+  several entries have the identical create time.
+
+* Remove trailing white-space at the end of some of the lines of output of
+  the "show" commands.
+
+* Force the timezone to be 'local' in DateTime->from_epoch function calls.
+
+* Re-order table drops in Wallet::Admin::destroy to take into account
+  table dependencies.
+
+* In Wallet::Report make sure that acl memberships are sorted to fix a bug
+  in the acl_duplicates method.
+
+* Add a 1-byte character set for the MySQL .sql file. Newer MySQL server
+  releases default to a 4-byte character set when creating tables. Wallet
+  sets indices on some 255-byte fields which, with a 4-byte character set,
+  exceeds the maximum index length that MySQL supports.
+
+* Fix some tests to be more flexible when running "make check" against
+  MySQL or PostgreSQL. MySQL and PostgreSQL can leave "holes" in the
+  primary keys used if a record insert fails due to a constraint
+  violation. Thus, the primary key for some ACLs in the test suite will
+  differ when running "make check" against SQLite versus running "make
+  check" against MySQL.
+
+* Turn off version checking when doing initial set up of a
+  database. Otherwise DBIx::Class::Schema complains about an
+  unversioned database.
+
+* Fix bug in t/general/admin.t test suite where some tests would fail if
+  run with a backend other than SQLite.
