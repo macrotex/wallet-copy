@@ -33,7 +33,7 @@ my @trace = ($admin, $host, time);
 db_setup;
 my $setup = setup_initialize();
 is ($@, '', 'Database connection succeeded');
-is ($setup->reinitialize ($setup), 1, 'Database initialization succeeded');
+is ($setup->reinitialize ($admin), 1, 'Database initialization succeeded');
 my $schema = $setup->schema;
 
 # Create a few ACLs for later testing.

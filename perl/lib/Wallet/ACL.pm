@@ -377,6 +377,11 @@ sub set_comment {
     if (defined($comment)) {
         if ($comment eq q{}) {
             $comment = undef;
+        } else {
+            if (length($comment) > 255) {
+                $self->error ('comment cannot be longer than 255 characters');
+                return;
+            }
         }
         eval {
             my $guard = $self->{schema}->txn_scope_guard;
@@ -443,6 +448,7 @@ sub list {
     eval {
         my $guard = $self->{schema}->txn_scope_guard;
         my %search = (ae_id => $self->{id});
+        my %options = (order_by => { -asc => [qw/ah_on ah_id/] });
         my @entry_recs = $self->{schema}->resultset('AclEntry')
             ->search (\%search);
         for my $entry (@entry_recs) {
@@ -495,7 +501,7 @@ sub history {
     eval {
         my $guard = $self->{schema}->txn_scope_guard;
         my %search  = (ah_acl => $self->{id});
-        my %options = (order_by => 'ah_on');
+        my %options = (order_by => { -asc => [qw/ah_on ah_id/] });
         my @data = $self->{schema}->resultset('AclHistory')
             ->search (\%search, \%options);
         for my $data (@data) {

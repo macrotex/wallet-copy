@@ -85,6 +85,13 @@ sub DESTROY {
 sub initialize {
     my ($self, $user) = @_;
 
+    # Suppress warnings that actually are just informational messages.
+    local $SIG{__WARN__} = sub {
+        my ($warn) = @_;
+        return if $warn =~ m{NOTICE:  table "\S+" does not exist, skipping};
+        warn $warn;
+    };
+
     # Deploy the database schema from DDL files, if they exist.  If not then
     # we automatically get the database from the Schema modules.
     $self->{schema}->deploy ({}, $Wallet::Config::DB_DDL_DIRECTORY);
@@ -154,6 +161,14 @@ sub default_data {
 # false on failure.
 sub reinitialize {
     my ($self, $user) = @_;
+
+    # Suppress warnings that actually are just informational messages.
+    local $SIG{__WARN__} = sub {
+        my ($warn) = @_;
+        return if $warn =~ m{NOTICE:  table "\S+" does not exist, skipping};
+        warn $warn;
+    };
+
     return unless $self->destroy;
     return $self->initialize ($user);
 }
