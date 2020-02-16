@@ -30,9 +30,13 @@ my $host = 'localhost';
 my @trace = ($admin, $host, time);
 my $TZ = DateTime::TimeZone->new( name => 'local' );
 
-# Use Wallet::Admin to set up the database.
+# Use Wallet::Admin to set up the database. This setup destroys the
+# database, so we turn off version checking during the initial setup since
+# we are ging to be destroying the tables anyway. This avoids some
+# unpleasant unversioned schema errors.
+# DBIx::Class::Schema::Versioned::_on_connect(): Your DB is currently unversioned.
 db_setup;
-my $setup = eval { Wallet::Admin->new };
+my $setup = setup_initialize();
 is ($@, '', 'Database connection succeeded');
 is ($setup->reinitialize ($setup), 1, 'Database initialization succeeded');
 my $schema = $setup->schema;
@@ -151,7 +155,7 @@ is ($entries[1][0], 'krb5', ' and the right scheme for 2');
 is ($entries[1][1], $user2, ' and the right identifier for 2');
 $expected = <<"EOE";
 Members of ACL test (id: 2) are:
-  krb5 
+  krb5
   krb5 $user2
 EOE
 is ($acl->show, $expected, ' and show returns correctly');
@@ -184,6 +188,7 @@ is (scalar ($acl->check_errors), '', ' with no error message');
 
 # Test rename.
 my $acl_nest = eval { Wallet::ACL->create ('test-nesting', $schema, @trace) };
+
 ok (defined ($acl_nest), 'ACL creation for setting up nested');
 if ($acl_nest->add ('nested', 'test', @trace)) {
     ok (1, ' and adding the nesting');
@@ -228,11 +233,11 @@ $date  add krb5 $user2
     by $admin from $host
 $date  remove krb5 $user1
     by $admin from $host
-$date  add krb5 
+$date  add krb5
     by $admin from $host
 $date  remove krb5 $user2
     by $admin from $host
-$date  remove krb5 
+$date  remove krb5
     by $admin from $host
 $date  rename from test
     by $admin from $host
@@ -265,7 +270,10 @@ $acl = eval { Wallet::ACL->create ('example', $schema, @trace) };
 ok (defined ($acl), ' and creating another with the same name works');
 is ($@, '', ' with no exceptions');
 is ($acl->name, 'example', ' and the right name');
-like ($acl->id, qr{\A[34]\z}, ' and an ID of 3 or 4');
+# Keep in mind that when testing against MySQL failed inserts use up auto-incremented
+# primary keys. Thus, the id for this acl in MySQL will be larger than in
+# SQLite. Thuse we allow this id to be wither 4 or 5.
+like ($acl->id, qr{\A[45]\z}, ' and an ID of 4 or 5');
 
 # Test replace. by creating three acls, then assigning two objects to the
 # first, one to the second, and another to the third.  Then replace the first

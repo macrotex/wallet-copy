@@ -22,6 +22,8 @@ use Wallet::Object::Base;
 
 our $VERSION = '1.04';
 
+my $TZ = DateTime::TimeZone->new( name => 'local' );
+
 ##############################################################################
 # Constructors
 ##############################################################################
@@ -76,7 +78,7 @@ sub create {
         die "unable to retrieve new ACL ID" unless defined $id;
 
         # Add to the history table.
-        my $date = DateTime->from_epoch (epoch => $time);
+        my $date = DateTime->from_epoch (epoch => $time, time_zone => $TZ);
         %record = (ah_acl    => $id,
                    ah_name   => $name,
                    ah_action => 'create',
@@ -168,7 +170,7 @@ sub log_acl {
     unless ($action =~ /^(add|remove|rename)\z/) {
         die "invalid history action $action";
     }
-    my $date = DateTime->from_epoch (epoch => $time);
+    my $date = DateTime->from_epoch (epoch => $time, time_zone => $TZ);
     my %record = (ah_acl        => $self->{id},
                   ah_name       => $self->{name},
                   ah_action     => $action,
@@ -301,7 +303,7 @@ sub destroy {
         $entry->delete if defined $entry;
 
         # Create new history line for the deletion.
-        my $date = DateTime->from_epoch (epoch => $time);
+        my $date = DateTime->from_epoch (epoch => $time, time_zone => $TZ);
         my %record = (ah_acl    => $self->{id},
                       ah_name   => $self->{name},
                       ah_action => 'destroy',
@@ -471,7 +473,11 @@ sub show {
     my $output = "Members of ACL $name (id: $id) are:\n";
     for my $entry (sort { $$a[0] cmp $$b[0] or $$a[1] cmp $$b[1] } @entries) {
         my ($scheme, $identifier) = @$entry;
-        $output .= "  $scheme $identifier\n";
+        if ($identifier) {
+            $output .= "  $scheme $identifier\n";
+        } else {
+            $output .= "  $scheme\n";
+        }
     }
 
     my $comment = $self->comment;
@@ -497,8 +503,12 @@ sub history {
             $date->set_time_zone ('local');
             $output .= sprintf ("%s %s  ", $date->ymd, $date->hms);
             if ($data->ah_action eq 'add' || $data->ah_action eq 'remove') {
-                $output .= sprintf ("%s %s %s", $data->ah_action,
-                                    $data->ah_scheme, $data->ah_identifier);
+                if ($data->ah_identifier) {
+                    $output .= sprintf ("%s %s %s", $data->ah_action,
+                                        $data->ah_scheme, $data->ah_identifier);
+                } else {
+                    $output .= sprintf ("%s %s", $data->ah_action, $data->ah_scheme);
+                }
             } elsif ($data->ah_action eq 'rename') {
                 $output .= 'rename from ' . $data->ah_name;
             } else {
