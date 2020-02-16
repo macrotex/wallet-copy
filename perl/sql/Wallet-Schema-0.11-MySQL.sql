@@ -28,7 +28,7 @@ CREATE TABLE `acl_history` (
   INDEX `acl_history_idx_ah_acl` (`ah_acl`),
   INDEX `acl_history_idx_ah_name` (`ah_name`),
   PRIMARY KEY (`ah_id`)
-);
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 
 DROP TABLE IF EXISTS `acl_schemes`;
 
@@ -39,7 +39,7 @@ CREATE TABLE `acl_schemes` (
   `as_name` varchar(32) NOT NULL,
   `as_class` varchar(64) NULL,
   PRIMARY KEY (`as_name`)
-) ENGINE=InnoDB;
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `acls`;
 
@@ -52,7 +52,7 @@ CREATE TABLE `acls` (
   `ac_comment` varchar(255) NULL,
   PRIMARY KEY (`ac_id`),
   UNIQUE `ac_name` (`ac_name`)
-) ENGINE=InnoDB;
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `enctypes`;
 
@@ -62,7 +62,7 @@ DROP TABLE IF EXISTS `enctypes`;
 CREATE TABLE `enctypes` (
   `en_name` varchar(255) NOT NULL,
   PRIMARY KEY (`en_name`)
-);
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 
 DROP TABLE IF EXISTS `flags`;
 
@@ -74,7 +74,7 @@ CREATE TABLE `flags` (
   `fl_name` varchar(255) NOT NULL,
   `fl_flag` enum('locked', 'unchanging') NOT NULL,
   PRIMARY KEY (`fl_type`, `fl_name`, `fl_flag`)
-);
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 
 DROP TABLE IF EXISTS `keytab_enctypes`;
 
@@ -85,7 +85,7 @@ CREATE TABLE `keytab_enctypes` (
   `ke_name` varchar(255) NOT NULL,
   `ke_enctype` varchar(255) NOT NULL,
   PRIMARY KEY (`ke_name`, `ke_enctype`)
-);
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 
 DROP TABLE IF EXISTS `keytab_sync`;
 
@@ -96,7 +96,7 @@ CREATE TABLE `keytab_sync` (
   `ks_name` varchar(255) NOT NULL,
   `ks_target` varchar(255) NOT NULL,
   PRIMARY KEY (`ks_name`, `ks_target`)
-);
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 
 DROP TABLE IF EXISTS `object_history`;
 
@@ -117,7 +117,7 @@ CREATE TABLE `object_history` (
   `oh_on` datetime NOT NULL,
   INDEX `object_history_idx_oh_type_oh_name` (`oh_type`, `oh_name`),
   PRIMARY KEY (`oh_id`)
-);
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 
 DROP TABLE IF EXISTS `sync_targets`;
 
@@ -127,7 +127,7 @@ DROP TABLE IF EXISTS `sync_targets`;
 CREATE TABLE `sync_targets` (
   `st_name` varchar(255) NOT NULL,
   PRIMARY KEY (`st_name`)
-);
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 
 DROP TABLE IF EXISTS `types`;
 
@@ -138,7 +138,7 @@ CREATE TABLE `types` (
   `ty_name` varchar(16) NOT NULL,
   `ty_class` varchar(64) NULL,
   PRIMARY KEY (`ty_name`)
-) ENGINE=InnoDB;
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `acl_entries`;
 
@@ -154,7 +154,7 @@ CREATE TABLE `acl_entries` (
   PRIMARY KEY (`ae_id`, `ae_scheme`, `ae_identifier`),
   CONSTRAINT `acl_entries_fk_ae_scheme` FOREIGN KEY (`ae_scheme`) REFERENCES `acl_schemes` (`as_name`),
   CONSTRAINT `acl_entries_fk_ae_id` FOREIGN KEY (`ae_id`) REFERENCES `acls` (`ac_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `objects`;
 
@@ -196,7 +196,7 @@ CREATE TABLE `objects` (
   CONSTRAINT `objects_fk_ob_acl_show` FOREIGN KEY (`ob_acl_show`) REFERENCES `acls` (`ac_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `objects_fk_ob_acl_store` FOREIGN KEY (`ob_acl_store`) REFERENCES `acls` (`ac_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `objects_fk_ob_type` FOREIGN KEY (`ob_type`) REFERENCES `types` (`ty_name`)
-) ENGINE=InnoDB;
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `duo`;
 
@@ -210,7 +210,7 @@ CREATE TABLE `duo` (
   INDEX `duo_idx_du_type_du_name` (`du_type`, `du_name`),
   PRIMARY KEY (`du_name`, `du_type`),
   CONSTRAINT `duo_fk_du_type_du_name` FOREIGN KEY (`du_type`, `du_name`) REFERENCES `objects` (`ob_type`, `ob_name`)
-) ENGINE=InnoDB;
+) CHARACTER SET latin1 COLLATE latin1_swedish_ci ENGINE=InnoDB;
 
 SET foreign_key_checks=1;
 

@@ -165,9 +165,9 @@ sub destroy {
 
     # Get an actual DBI handle and use it to delete all tables.
     my $dbh = $self->dbh;
-    my @tables = qw/acl_entries object_history objects acls acl_history
+    my @tables = qw/acl_entries duo object_history objects acls acl_history
       acl_schemes enctypes flags keytab_enctypes keytab_sync sync_targets
-      duo types dbix_class_schema_versions/;
+      types dbix_class_schema_versions/;
     for my $table (@tables) {
         my $sql = "DROP TABLE IF EXISTS $table";
         $dbh->do ($sql);

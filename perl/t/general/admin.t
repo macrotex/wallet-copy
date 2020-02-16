@@ -70,7 +70,6 @@ SKIP: {
     my @path = (split (':', $ENV{PATH}));
     my ($sqlite) = grep { -x $_ } map { "$_/sqlite3" } @path;
     skip 'sqlite3 not found', 7 unless $sqlite;
-
     # Delete all tables and then redump them straight from the SQL file to
     # avoid getting the version table.
     unlink 'wallet-db';
@@ -82,6 +81,7 @@ SKIP: {
     $Wallet::Schema::VERSION = '0.08';
     $admin = eval { Wallet::Admin->new };
     my $retval = $admin->upgrade;
+
     is ($retval, 1, ' and performing an upgrade to 0.08 succeeds');
     my $sql = "select version from dbix_class_schema_versions order by"
       . " version DESC";

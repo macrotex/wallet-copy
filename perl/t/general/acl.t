@@ -28,6 +28,7 @@ my $user1 = 'alice@EXAMPLE.COM';
 my $user2 = 'bob@EXAMPLE.COM';
 my $host = 'localhost';
 my @trace = ($admin, $host, time);
+my $TZ = DateTime::TimeZone->new( name => 'local' );
 
 # Use Wallet::Admin to set up the database.
 db_setup;
@@ -35,6 +36,21 @@ my $setup = eval { Wallet::Admin->new };
 is ($@, '', 'Database connection succeeded');
 is ($setup->reinitialize ($setup), 1, 'Database initialization succeeded');
 my $schema = $setup->schema;
+
+# #### ## #### ## #### ## #### ## #### ## #### ## #### ## #### #
+sub show_acl_id {
+    my ($id1) = @_ ;
+    my $acl1 = eval { Wallet::ACL->new ($id1, $schema) };
+    warn '-----------------';
+    if ($acl1) {
+        warn $acl1->show();
+    } else {
+        warn "no ACL with id $id1";
+    }
+    warn '-----------------';
+    return;
+}
+# #### ## #### ## #### ## #### ## #### ## #### ## #### ## #### #
 
 # Test create and new.
 my $acl = eval { Wallet::ACL->create ('test', $schema, @trace) };
@@ -202,7 +218,7 @@ like ($acl->error, qr/^cannot rename ACL example to ADMIN: /,
 is ($entries[0][1], 'example', ' and the name in a nested ACL updated');
 
 # Test history.
-my $date = strftime ('%Y-%m-%d %H:%M:%S', localtime $trace[2]);
+my $date = DateTime->from_epoch(epoch => $trace[2], time_zone => $TZ)->strftime('%Y-%m-%d %H:%M:%S');
 my $history = <<"EOO";
 $date  create
     by $admin from $host
