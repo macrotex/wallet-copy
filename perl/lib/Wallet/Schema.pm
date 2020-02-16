@@ -50,6 +50,7 @@ sub connect {
     my $user = $Wallet::Config::DB_USER;
     my $pass = $Wallet::Config::DB_PASSWORD;
     my %attrs = (PrintError => 0, RaiseError => 1);
+
     my $schema = eval { $class->SUPER::connect ($dsn, $user, $pass, \%attrs) };
     if ($@) {
         die "cannot connect to database: $@\n";

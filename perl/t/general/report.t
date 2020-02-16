@@ -22,7 +22,7 @@ use Util;
 
 # Use Wallet::Admin to set up the database.
 db_setup;
-my $admin = eval { Wallet::Admin->new };
+my $admin = setup_initialize();
 is ($@, '', 'Wallet::Admin creation did not die');
 is ($admin->reinitialize ('admin@EXAMPLE.COM'), 1,
     'Database initialization succeeded');
